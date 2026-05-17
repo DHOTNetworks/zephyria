@@ -125,7 +125,7 @@ pub fn build(
     total_size += @intCast(bytecode.len);
 
     var flags: u16 = 0;
-    
+
     var abi_offset: u32 = 0;
     var abi_size: u32 = 0;
     if (options.abi) |a| {
@@ -254,7 +254,7 @@ test "full package with new fields" {
     const type_table = "types";
     const parallel_desc = "parallel";
     var sm_hash: [32]u8 = [_]u8{0xAA} ** 32;
-    
+
     const pkg = try build(testing.allocator, bytecode, .{
         .type_table = type_table,
         .parallel_descriptor = parallel_desc,

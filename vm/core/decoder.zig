@@ -80,7 +80,6 @@ pub const JType = struct {
     imm: i64,
 };
 
-
 /// Custom-type: Forge ZEPH instruction decoded from custom-0..3 opcode space.
 /// The operation is encoded in the instruction word (not in a register):
 ///   funct3 = op_val >> 4
@@ -116,7 +115,7 @@ pub const Opcode = struct {
     pub const SYSTEM: u7 = 0b1110011; // System: ECALL, EBREAK
     pub const OP_32: u7 = 0b0111011; // RV64 word ops: ADDW, SUBW, etc.
     pub const OP_IMM_32: u7 = 0b0011011; // RV64 word imm ops: ADDIW, etc.
-    pub const LOAD_FP: u7  = 0b0000111; // Reserved — emit fault
+    pub const LOAD_FP: u7 = 0b0000111; // Reserved — emit fault
     pub const STORE_FP: u7 = 0b0100111; // Reserved — emit fault
     // RISC-V custom opcode space — used by Forge compiler for ZEPH instructions
     pub const CUSTOM_0: u7 = 0b0001011; // 0x0B — state operations
@@ -210,10 +209,7 @@ pub fn decode(word: u32) DecodeError!Instruction {
         Opcode.AUIPC => decodeU(word),
         Opcode.JAL => decodeJ(word),
         Opcode.SYSTEM => decodeSystem(word),
-        Opcode.CUSTOM_0,
-        Opcode.CUSTOM_1,
-        Opcode.CUSTOM_2,
-        Opcode.CUSTOM_3 => decodeCustom(word),
+        Opcode.CUSTOM_0, Opcode.CUSTOM_1, Opcode.CUSTOM_2, Opcode.CUSTOM_3 => decodeCustom(word),
         else => DecodeError.IllegalInstruction,
     };
 }

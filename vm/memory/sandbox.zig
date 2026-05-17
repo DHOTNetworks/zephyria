@@ -44,11 +44,11 @@ pub const heapEnd: u32 = 0x0005_FFFF;
 
 /// Stack region constants
 pub const stackStart: u32 = 0x0006_0000;
-pub const stackEnd:   u32 = 0x0006_FFFF;
+pub const stackEnd: u32 = 0x0006_FFFF;
 /// stackTop must be 8-byte aligned so the compiler prologue's first
 /// SD (store doubleword) after ADDI sp, sp, -N lands on an aligned address.
 /// 0x0006_FFFC was only 4-byte aligned → storeDoubleword fault on every call.
-pub const stackTop:   u32 = 0x0006_FFF8;
+pub const stackTop: u32 = 0x0006_FFF8;
 
 /// Calldata region constants
 pub const calldataStart: u32 = 0x0007_0000;
@@ -377,8 +377,6 @@ test "access beyond memory size returns SegFault" {
     const result = mem.loadByte(memorySize);
     try testing.expectError(MemoryError.SegFault, result);
 }
-
-
 
 test "misaligned word access returns error" {
     var mem = try SandboxMemory.init(testing.allocator);

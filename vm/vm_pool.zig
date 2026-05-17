@@ -141,16 +141,16 @@ pub const CodeCache = struct {
 
     pub fn getDecodedCode(self: *CodeCache, code_hash: [32]u8) ?CachedCode {
         self.lock.lockShared();
-        
+
         if (self.map.contains(code_hash)) {
             self.lock.unlockShared();
-            
+
             // Acquire write lock to update LRU safely
             self.lock.lock();
             defer self.lock.unlock();
-            
+
             self.stats.lookups += 1;
-            
+
             if (self.map.getPtr(code_hash)) |mutable_entry| {
                 self.stats.hits += 1;
                 self.access_counter += 1;
@@ -159,9 +159,9 @@ pub const CodeCache = struct {
             }
             return null;
         }
-        
+
         self.lock.unlockShared();
-        
+
         self.lock.lock();
         defer self.lock.unlock();
         self.stats.lookups += 1;
@@ -282,11 +282,11 @@ pub const VMPool = struct {
         // Overflow allocation
         self.shards[shard_idx].mutex.lock();
         defer self.shards[shard_idx].mutex.unlock();
-        
+
         const total = @as(u32, @intCast(self.shards[shard_idx].all_buffers.items.len));
         // Simple heuristic: distribute max_overflow evenly across shards
         const shard_max = (self.config.pool_size / MAX_SHARDS) + (self.config.max_overflow / MAX_SHARDS) + 1;
-        
+
         if (total >= shard_max) {
             return null; // overflow limit
         }

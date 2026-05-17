@@ -27,17 +27,17 @@ pub const ZEPHBIN_MAGIC: [4]u8 = .{ 'F', 'O', 'R', 'G' };
 pub const ZEPHBIN_VERSION: u16 = 1;
 
 pub const ZephBinHeader = extern struct {
-    magic:            [4]u8,
-    version:          u16,
-    flags:            u16,
-    contractName:    [32]u8,
-    actionCount:     u16,
-    _pad0:            u16,
-    accessListLen:  u32,
-    bytecodeLen:     u32,
-    checksum:         u32,
+    magic: [4]u8,
+    version: u16,
+    flags: u16,
+    contractName: [32]u8,
+    actionCount: u16,
+    _pad0: u16,
+    accessListLen: u32,
+    bytecodeLen: u32,
+    checksum: u32,
     dataSectionLen: u32,
-    _reserved:        [4]u8,
+    _reserved: [4]u8,
 };
 comptime {
     // Must match compiler layout exactly
@@ -57,15 +57,15 @@ pub const ParseError = error{
 /// A single action extracted from a ZephBin binary.
 pub const ZephAction = struct {
     selector: u32,
-    code:     []const u8, // slice into the original binary — zero-copy
+    code: []const u8, // slice into the original binary — zero-copy
 };
 
 /// Fully parsed ZephBin package.
 pub const ZephBinPackage = struct {
-    header:       ZephBinHeader,
-    actions:      []ZephAction,   // heap-allocated, caller must free
-    dataSection: []const u8,     // slice into original binary — zero-copy
-    allocator:    std.mem.Allocator,
+    header: ZephBinHeader,
+    actions: []ZephAction, // heap-allocated, caller must free
+    dataSection: []const u8, // slice into original binary — zero-copy
+    allocator: std.mem.Allocator,
 
     pub fn deinit(self: *ZephBinPackage) void {
         self.allocator.free(self.actions);
@@ -114,7 +114,7 @@ pub fn parse(allocator: std.mem.Allocator, data: []const u8) ParseError!ZephBinP
         @ptrCast(data[0..@sizeOf(ZephBinHeader)].ptr);
 
     if (!std.mem.eql(u8, &hdr.magic, &ZEPHBIN_MAGIC)) return ParseError.InvalidMagic;
-    if (hdr.version != ZEPHBIN_VERSION)                return ParseError.UnsupportedVersion;
+    if (hdr.version != ZEPHBIN_VERSION) return ParseError.UnsupportedVersion;
 
     // Locate sections (Forge compiler layout: Data section, Access List, Bytecode)
     const dsStart: usize = @sizeOf(ZephBinHeader);
@@ -140,23 +140,23 @@ pub fn parse(allocator: std.mem.Allocator, data: []const u8) ParseError!ZephBinP
     var pos: usize = 2;
     for (actions) |*action| {
         if (pos + 8 > bcData.len) return ParseError.InvalidFormat;
-        const sel     = std.mem.readInt(u32, bcData[pos..][0..4], .little);
-        const codeLen = std.mem.readInt(u32, bcData[pos+4..][0..4], .little);
+        const sel = std.mem.readInt(u32, bcData[pos..][0..4], .little);
+        const codeLen = std.mem.readInt(u32, bcData[pos + 4 ..][0..4], .little);
         pos += 8;
         if (pos + codeLen > bcData.len) return ParseError.InvalidFormat;
-        if (codeLen > sandbox.codeSize)  return ParseError.CodeTooLarge;
+        if (codeLen > sandbox.codeSize) return ParseError.CodeTooLarge;
         action.* = .{
             .selector = sel,
-            .code     = bcData[pos .. pos + codeLen],
+            .code = bcData[pos .. pos + codeLen],
         };
         pos += codeLen;
     }
 
     return ZephBinPackage{
-        .header       = hdr.*,
-        .actions      = actions,
+        .header = hdr.*,
+        .actions = actions,
         .dataSection = dataSection,
-        .allocator    = allocator,
+        .allocator = allocator,
     };
 }
 
@@ -166,7 +166,7 @@ const testing = std.testing;
 
 test "isZephBin rejects non-FORG data" {
     try testing.expect(!isZephBin("ELF\x7f" ** 16));
-    try testing.expect(!isZephBin(&[_]u8{0x7F, 'E', 'L', 'F'}));
+    try testing.expect(!isZephBin(&[_]u8{ 0x7F, 'E', 'L', 'F' }));
 }
 
 test "isZephBin recognises FORG magic" {
@@ -185,7 +185,7 @@ test "parse rejects wrong version" {
 test "parse empty contract (0 actions)" {
     var data = [_]u8{0} ** 70;
     @memcpy(data[0..4], "FORG");
-    std.mem.writeInt(u16, data[4..6],  ZEPHBIN_VERSION, .little);
+    std.mem.writeInt(u16, data[4..6], ZEPHBIN_VERSION, .little);
     // accessListLen = 0, bytecodeLen = 2 (just the u16 actionCount=0), dataSectionLen = 0
     std.mem.writeInt(u32, data[52..56], 0, .little); // accessListLen
     std.mem.writeInt(u32, data[56..60], 2, .little); // bytecodeLen
@@ -215,7 +215,7 @@ test "pickAction falls back to index 0 on unknown selector" {
     var data = [_]u8{0} ** (64 + 14);
     @memcpy(data[0..4], "FORG");
     std.mem.writeInt(u16, data[4..6], ZEPHBIN_VERSION, .little);
-    std.mem.writeInt(u32, data[52..56], 0,  .little); // accessListLen
+    std.mem.writeInt(u32, data[52..56], 0, .little); // accessListLen
     std.mem.writeInt(u32, data[56..60], 14, .little); // bytecodeLen
     @memcpy(data[64..78], &bcSection);
 

@@ -17,17 +17,17 @@ const sandbox = @import("../memory/sandbox.zig");
 // ELF constants
 // ---------------------------------------------------------------------------
 
-pub const ELF_MAGIC    = [4]u8{ 0x7F, 'E', 'L', 'F' };
+pub const ELF_MAGIC = [4]u8{ 0x7F, 'E', 'L', 'F' };
 pub const ELFCLASS32: u8 = 1;
 pub const ELFCLASS64: u8 = 2;
 pub const ELFDATA2LSB: u8 = 1; // Little-endian
 
 pub const ET_EXEC: u16 = 2;
-pub const ET_DYN:  u16 = 3;
+pub const ET_DYN: u16 = 3;
 pub const EM_RISCV: u16 = 243;
 
 pub const SHT_PROGBITS: u32 = 1;
-pub const SHT_NOBITS:   u32 = 8;
+pub const SHT_NOBITS: u32 = 8;
 
 pub const PT_LOAD: u32 = 1;
 pub const PF_X: u32 = 0x1;
@@ -39,44 +39,44 @@ pub const PF_R: u32 = 0x4;
 // ---------------------------------------------------------------------------
 
 pub const Elf32Header = extern struct {
-    e_ident:     [16]u8,
-    e_type:      u16,
-    e_machine:   u16,
-    e_version:   u32,
-    e_entry:     u32,
-    e_phoff:     u32,
-    e_shoff:     u32,
-    e_flags:     u32,
-    e_ehsize:    u16,
+    e_ident: [16]u8,
+    e_type: u16,
+    e_machine: u16,
+    e_version: u32,
+    e_entry: u32,
+    e_phoff: u32,
+    e_shoff: u32,
+    e_flags: u32,
+    e_ehsize: u16,
     e_phentsize: u16,
-    e_phnum:     u16,
+    e_phnum: u16,
     e_shentsize: u16,
-    e_shnum:     u16,
-    e_shstrndx:  u16,
+    e_shnum: u16,
+    e_shstrndx: u16,
 };
 
 pub const Elf32ProgramHeader = extern struct {
-    p_type:   u32,
+    p_type: u32,
     pOffset: u32,
-    p_vaddr:  u32,
-    p_paddr:  u32,
+    p_vaddr: u32,
+    p_paddr: u32,
     p_filesz: u32,
-    p_memsz:  u32,
-    p_flags:  u32,
-    p_align:  u32,
+    p_memsz: u32,
+    p_flags: u32,
+    p_align: u32,
 };
 
 pub const Elf32SectionHeader = extern struct {
-    sh_name:      u32,
-    sh_type:      u32,
-    sh_flags:     u32,
-    sh_addr:      u32,
-    sh_offset:    u32,
-    sh_size:      u32,
-    sh_link:      u32,
-    sh_info:      u32,
+    sh_name: u32,
+    sh_type: u32,
+    sh_flags: u32,
+    sh_addr: u32,
+    sh_offset: u32,
+    sh_size: u32,
+    sh_link: u32,
+    sh_info: u32,
     sh_addralign: u32,
-    sh_entsize:   u32,
+    sh_entsize: u32,
 };
 
 // ---------------------------------------------------------------------------
@@ -86,44 +86,44 @@ pub const Elf32SectionHeader = extern struct {
 // ---------------------------------------------------------------------------
 
 pub const Elf64Header = extern struct {
-    e_ident:     [16]u8,
-    e_type:      u16,
-    e_machine:   u16,
-    e_version:   u32,
-    e_entry:     u64,
-    e_phoff:     u64,
-    e_shoff:     u64,
-    e_flags:     u32,
-    e_ehsize:    u16,
+    e_ident: [16]u8,
+    e_type: u16,
+    e_machine: u16,
+    e_version: u32,
+    e_entry: u64,
+    e_phoff: u64,
+    e_shoff: u64,
+    e_flags: u32,
+    e_ehsize: u16,
     e_phentsize: u16,
-    e_phnum:     u16,
+    e_phnum: u16,
     e_shentsize: u16,
-    e_shnum:     u16,
-    e_shstrndx:  u16,
+    e_shnum: u16,
+    e_shstrndx: u16,
 };
 
 pub const Elf64ProgramHeader = extern struct {
-    p_type:   u32,
-    p_flags:  u32, // NOTE: before pOffset in ELF64
+    p_type: u32,
+    p_flags: u32, // NOTE: before pOffset in ELF64
     pOffset: u64,
-    p_vaddr:  u64,
-    p_paddr:  u64,
+    p_vaddr: u64,
+    p_paddr: u64,
     p_filesz: u64,
-    p_memsz:  u64,
-    p_align:  u64,
+    p_memsz: u64,
+    p_align: u64,
 };
 
 pub const Elf64SectionHeader = extern struct {
-    sh_name:      u32,
-    sh_type:      u32,
-    sh_flags:     u64,
-    sh_addr:      u64,
-    sh_offset:    u64,
-    sh_size:      u64,
-    sh_link:      u32,
-    sh_info:      u32,
+    sh_name: u32,
+    sh_type: u32,
+    sh_flags: u64,
+    sh_addr: u64,
+    sh_offset: u64,
+    sh_size: u64,
+    sh_link: u32,
+    sh_info: u32,
     sh_addralign: u64,
-    sh_entsize:   u64,
+    sh_entsize: u64,
 };
 
 // ---------------------------------------------------------------------------
@@ -143,20 +143,20 @@ pub const ParseError = error{
 };
 
 pub const LoadSegment = struct {
-    vaddr:      u32,
-    data:       []const u8,
-    memsz:      u32,
-    writable:   bool,
+    vaddr: u32,
+    data: []const u8,
+    memsz: u32,
+    writable: bool,
     executable: bool,
 };
 
 pub const ElfBinary = struct {
-    entryPoint:   u32,
-    code:          []const u8,
-    initData:     []const u8,
-    codeVaddr:    u32,
-    dataVaddr:    u32,
-    segments:      [8]LoadSegment,
+    entryPoint: u32,
+    code: []const u8,
+    initData: []const u8,
+    codeVaddr: u32,
+    dataVaddr: u32,
+    segments: [8]LoadSegment,
     segmentCount: u8,
 };
 
@@ -174,7 +174,7 @@ pub fn parse(data: []const u8) ParseError!ElfBinary {
     return switch (data[4]) {
         ELFCLASS32 => parse32(data),
         ELFCLASS64 => parse64(data),
-        else       => ParseError.NotElf32OrElf64,
+        else => ParseError.NotElf32OrElf64,
     };
 }
 
@@ -189,12 +189,12 @@ fn parse32(data: []const u8) ParseError!ElfBinary {
     if (hdr.e_machine != EM_RISCV) return ParseError.NotRiscV;
 
     var result = ElfBinary{
-        .entryPoint   = hdr.e_entry,
-        .code          = &[_]u8{},
-        .initData     = &[_]u8{},
-        .codeVaddr    = 0,
-        .dataVaddr    = 0,
-        .segments      = undefined,
+        .entryPoint = hdr.e_entry,
+        .code = &[_]u8{},
+        .initData = &[_]u8{},
+        .codeVaddr = 0,
+        .dataVaddr = 0,
+        .segments = undefined,
         .segmentCount = 0,
     };
 
@@ -211,18 +211,18 @@ fn parse32(data: []const u8) ParseError!ElfBinary {
             const exec = (ph.p_flags & PF_X) != 0;
             const writ = (ph.p_flags & PF_W) != 0;
             result.segments[result.segmentCount] = .{
-                .vaddr      = ph.p_vaddr,
-                .data       = data[ph.pOffset..seg_end],
-                .memsz      = ph.p_memsz,
-                .writable   = writ,
+                .vaddr = ph.p_vaddr,
+                .data = data[ph.pOffset..seg_end],
+                .memsz = ph.p_memsz,
+                .writable = writ,
                 .executable = exec,
             };
             result.segmentCount += 1;
             if (exec and result.code.len == 0) {
-                result.code       = data[ph.pOffset..seg_end];
+                result.code = data[ph.pOffset..seg_end];
                 result.codeVaddr = ph.p_vaddr;
             } else if (!exec and result.initData.len == 0) {
-                result.initData  = data[ph.pOffset..seg_end];
+                result.initData = data[ph.pOffset..seg_end];
                 result.dataVaddr = ph.p_vaddr;
             }
         }
@@ -242,11 +242,11 @@ fn parse32(data: []const u8) ParseError!ElfBinary {
             const sec_end = sh.sh_offset + sh.sh_size;
             if (sec_end > data.len) return ParseError.InvalidFormat;
             if (std.mem.eql(u8, name, ".text")) {
-                result.code       = data[sh.sh_offset..sec_end];
+                result.code = data[sh.sh_offset..sec_end];
                 result.codeVaddr = sh.sh_addr;
             } else if (std.mem.eql(u8, name, ".data") or std.mem.eql(u8, name, ".rodata")) {
                 if (result.initData.len == 0) {
-                    result.initData  = data[sh.sh_offset..sec_end];
+                    result.initData = data[sh.sh_offset..sec_end];
                     result.dataVaddr = sh.sh_addr;
                 }
             }
@@ -269,12 +269,12 @@ fn parse64(data: []const u8) ParseError!ElfBinary {
     if (hdr.e_entry > std.math.maxInt(u32)) return ParseError.TooLarge;
 
     var result = ElfBinary{
-        .entryPoint   = @truncate(hdr.e_entry),
-        .code          = &[_]u8{},
-        .initData     = &[_]u8{},
-        .codeVaddr    = 0,
-        .dataVaddr    = 0,
-        .segments      = undefined,
+        .entryPoint = @truncate(hdr.e_entry),
+        .code = &[_]u8{},
+        .initData = &[_]u8{},
+        .codeVaddr = 0,
+        .dataVaddr = 0,
+        .segments = undefined,
         .segmentCount = 0,
     };
 
@@ -287,12 +287,12 @@ fn parse64(data: []const u8) ParseError!ElfBinary {
             const ph: *align(1) const Elf64ProgramHeader =
                 @ptrCast(data[ph_off..][0..@sizeOf(Elf64ProgramHeader)].ptr);
             if (ph.p_type != PT_LOAD or ph.p_filesz == 0) continue;
-            if (ph.p_vaddr  > sandbox.memorySize) return ParseError.TooLarge;
+            if (ph.p_vaddr > sandbox.memorySize) return ParseError.TooLarge;
             if (ph.p_filesz > sandbox.memorySize) return ParseError.TooLarge;
-            if (ph.p_memsz  > sandbox.memorySize) return ParseError.TooLarge;
-            if (ph.pOffset > data.len)             return ParseError.InvalidFormat;
-            const pOff: usize  = @intCast(ph.pOffset);
-            const pFsz: usize  = @intCast(ph.p_filesz);
+            if (ph.p_memsz > sandbox.memorySize) return ParseError.TooLarge;
+            if (ph.pOffset > data.len) return ParseError.InvalidFormat;
+            const pOff: usize = @intCast(ph.pOffset);
+            const pFsz: usize = @intCast(ph.p_filesz);
             const seg_end = pOff + pFsz;
             if (seg_end > data.len) return ParseError.InvalidFormat;
             const exec: bool = (ph.p_flags & PF_X) != 0;
@@ -300,18 +300,18 @@ fn parse64(data: []const u8) ParseError!ElfBinary {
             const vaddr32: u32 = @truncate(ph.p_vaddr);
             const memsz32: u32 = @truncate(ph.p_memsz);
             result.segments[result.segmentCount] = .{
-                .vaddr      = vaddr32,
-                .data       = data[pOff..seg_end],
-                .memsz      = memsz32,
-                .writable   = writ,
+                .vaddr = vaddr32,
+                .data = data[pOff..seg_end],
+                .memsz = memsz32,
+                .writable = writ,
                 .executable = exec,
             };
             result.segmentCount += 1;
             if (exec and result.code.len == 0) {
-                result.code       = data[pOff..seg_end];
+                result.code = data[pOff..seg_end];
                 result.codeVaddr = vaddr32;
             } else if (!exec and result.initData.len == 0) {
-                result.initData  = data[pOff..seg_end];
+                result.initData = data[pOff..seg_end];
                 result.dataVaddr = vaddr32;
             }
         }
@@ -328,19 +328,19 @@ fn parse64(data: []const u8) ParseError!ElfBinary {
             const sh: *align(1) const Elf64SectionHeader =
                 @ptrCast(data[sh_off..][0..@sizeOf(Elf64SectionHeader)].ptr);
             if (sh.sh_type != SHT_PROGBITS or sh.sh_size == 0) continue;
-            if (sh.sh_size   > sandbox.memorySize) return ParseError.TooLarge;
-            if (sh.sh_offset > data.len)             return ParseError.InvalidFormat;
+            if (sh.sh_size > sandbox.memorySize) return ParseError.TooLarge;
+            if (sh.sh_offset > data.len) return ParseError.InvalidFormat;
             const name = getSectionName(data, strtab, sh.sh_name) orelse continue;
-            const sec_off: usize  = @intCast(sh.sh_offset);
+            const sec_off: usize = @intCast(sh.sh_offset);
             const sec_size: usize = @intCast(sh.sh_size);
             const sec_end = sec_off + sec_size;
             if (sec_end > data.len) return ParseError.InvalidFormat;
             if (std.mem.eql(u8, name, ".text")) {
-                result.code       = data[sec_off..sec_end];
+                result.code = data[sec_off..sec_end];
                 result.codeVaddr = @truncate(sh.sh_addr);
             } else if (std.mem.eql(u8, name, ".data") or std.mem.eql(u8, name, ".rodata")) {
                 if (result.initData.len == 0) {
-                    result.initData  = data[sec_off..sec_end];
+                    result.initData = data[sec_off..sec_end];
                     result.dataVaddr = @truncate(sh.sh_addr);
                 }
             }
@@ -403,7 +403,10 @@ test "reject truncated data" {
 
 test "reject unknown ELF class" {
     var d = [_]u8{0} ** 64;
-    d[0] = 0x7F; d[1] = 'E'; d[2] = 'L'; d[3] = 'F';
+    d[0] = 0x7F;
+    d[1] = 'E';
+    d[2] = 'L';
+    d[3] = 'F';
     d[4] = 3; // unknown class
     d[5] = ELFDATA2LSB;
     try testing.expectError(ParseError.NotElf32OrElf64, parse(&d));
@@ -411,7 +414,10 @@ test "reject unknown ELF class" {
 
 test "reject big-endian ELF" {
     var d = [_]u8{0} ** 64;
-    d[0] = 0x7F; d[1] = 'E'; d[2] = 'L'; d[3] = 'F';
+    d[0] = 0x7F;
+    d[1] = 'E';
+    d[2] = 'L';
+    d[3] = 'F';
     d[4] = ELFCLASS32;
     d[5] = 2; // ELFDATA2MSB
     try testing.expectError(ParseError.NotLittleEndian, parse(&d));
@@ -419,8 +425,12 @@ test "reject big-endian ELF" {
 
 test "reject non-RISCV ELF32" {
     var d = [_]u8{0} ** 64;
-    d[0] = 0x7F; d[1] = 'E'; d[2] = 'L'; d[3] = 'F';
-    d[4] = ELFCLASS32; d[5] = ELFDATA2LSB;
+    d[0] = 0x7F;
+    d[1] = 'E';
+    d[2] = 'L';
+    d[3] = 'F';
+    d[4] = ELFCLASS32;
+    d[5] = ELFDATA2LSB;
     std.mem.writeInt(u16, d[16..18], ET_EXEC, .little);
     std.mem.writeInt(u16, d[18..20], 3, .little); // x86
     try testing.expectError(ParseError.NotRiscV, parse(&d));
@@ -428,8 +438,12 @@ test "reject non-RISCV ELF32" {
 
 test "reject non-RISCV ELF64" {
     var d = [_]u8{0} ** 128;
-    d[0] = 0x7F; d[1] = 'E'; d[2] = 'L'; d[3] = 'F';
-    d[4] = ELFCLASS64; d[5] = ELFDATA2LSB;
+    d[0] = 0x7F;
+    d[1] = 'E';
+    d[2] = 'L';
+    d[3] = 'F';
+    d[4] = ELFCLASS64;
+    d[5] = ELFDATA2LSB;
     std.mem.writeInt(u16, d[16..18], ET_EXEC, .little);
     std.mem.writeInt(u16, d[18..20], 62, .little); // x86_64
     try testing.expectError(ParseError.NotRiscV, parse(&d));

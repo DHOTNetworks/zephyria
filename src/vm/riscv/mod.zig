@@ -136,8 +136,8 @@ pub fn executeContract(
                     // storage context = current contract (subSelfAddress = bridge.selfAddress),
                     // code = target's bytecode (execCode set above).
                     subSelfAddress = bridge.selfAddress; // storage stays in current contract
-                    subCaller = bridge.caller;             // msg.sender = original caller
-                    subValue = bridge.value;               // value = original call value
+                    subCaller = bridge.caller; // msg.sender = original caller
+                    subValue = bridge.value; // value = original call value
                     // No value transfer in delegatecall
                 },
                 .staticcall => {

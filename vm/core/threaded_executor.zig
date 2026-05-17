@@ -321,7 +321,7 @@ inline fn execMulDiv(rs1: u64, rs2: u64, funct3: u3, wordOp: bool) u64 {
                 const wrs1: u32 = @truncate(rs1);
                 const wrs2: u32 = @truncate(rs2);
                 if (wrs2 == 0) break :blk @as(u64, 0xFFFFFFFF_FFFFFFFF);
-                break :blk @as(u64, wrs1 / wrs2); 
+                break :blk @as(u64, wrs1 / wrs2);
             } else {
                 if (rs2 == 0) break :blk @as(u64, 0xFFFFFFFF_FFFFFFFF);
                 break :blk rs1 / rs2;
@@ -345,7 +345,7 @@ inline fn execMulDiv(rs1: u64, rs2: u64, funct3: u3, wordOp: bool) u64 {
                 const wrs1: u32 = @truncate(rs1);
                 const wrs2: u32 = @truncate(rs2);
                 if (wrs2 == 0) break :blk rs1;
-                break :blk @as(u64, wrs1 % wrs2); 
+                break :blk @as(u64, wrs1 % wrs2);
             } else {
                 if (rs2 == 0) break :blk rs1;
                 break :blk rs1 % rs2;
